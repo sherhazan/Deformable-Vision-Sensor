@@ -175,9 +175,12 @@
             </li>
           </ul>
         </div>
-        <img src="./static/images/pipeline_diagram.png" 
-     alt="PIH Insertion Pipeline Block Diagram" 
-     style="width: 80%; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;"/>
+          <figure class="image is-centered" style="margin-bottom: 30px;">
+            <img src="./static/images/pipeline_diagram.png" 
+                  alt="3D Vision Sensor Block Diagram" 
+                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption class="has-text-centered is-size-7">Block diagram of the entire PIH insertion pipeline embedded with the 3D vision sensor.</figcaption>
+          </figure>
       </div>
     </div>
 
@@ -187,7 +190,7 @@
         
         <div class="content has-text-justified">
           <p>
-            The proposed 3D vision sensor is designed to estimate the relative angle (\(\hat{\theta}\)) and radius (\(\hat{R}\)) between the peg and the hole using RGB-D data. The system operates in a closed loop, capturing the 3D scene, classifying the relative position, and extracting a continuous value to guide the robot.
+            The proposed 3D vision sensor utilizes RGB-D data, classification CNN, and linear interpolation to estimate the relative angle (\(\hat{\theta}\)) and radius (\(\hat{R}\)) between the peg and the hole in the insertion plane. The sensor captures the 3D scene and predicts a probability vector indicating the relative position, which is then extracted to refine the peg's position during the insertion process.
           </p>
           </div>
 
@@ -195,56 +198,40 @@
             <img src="./static/images/vision_sensor_block_diagram.png" 
                  alt="3D Vision Sensor Block Diagram" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Block diagram of the proposed 3D vision sensor pipeline.</figcaption>
+            <figcaption class="has-text-centered is-size-7">Block diagram of the proposed 3D vision sensor for estimating relative positions in Peg-in-Hole tasks.</figcaption>
           </figure>
 
-          <div class="content has-text-justified">
-            <h5 class="title is-5">1. Space Discretization</h5>
-            <p>
-              To apply robust classification methods to this continuous regression problem, we discretize the scene space. The area around the hole is divided into equal sub-areas (classes). For the angular domain, the space is divided into sectors, while for the radial domain, it is divided into concentric rings.
-            </p>
-          </div>
+          <p>
+            In order to apply classification methods to assembly tasks within a continuous domain, a discretization of the scene space is required. This is achieved by dividing the scene space into equal sub-areas as classes, where each class corresponds to a range of values in the domain. Following the discretization, a classification CNN is utilized to predict the probability vector of the peg being in each sub-area.
+          </p>
 
           <figure class="image is-centered" style="margin-bottom: 30px;">
             <img src="./static/images/discretization.png" 
                  alt="Space Discretization" 
-                 style="width: 60%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Discretization of the scene space into sub-areas for Angle (left) and Radius (right).</figcaption>
+                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption class="has-text-centered is-size-7">Discretization of the scene space into sub-areas: (a) according to angle, (b) according to radius.</figcaption>
           </figure>
 
-          <div class="content has-text-justified">
-            <h5 class="title is-5">2. Late Fusion Architecture</h5>
-            <p>
-              We employ a <strong>Late Fusion</strong> Convolutional Neural Network (CNN) based on the ResNet-18 backbone. The architecture consists of two separate streams:
-            </p>
-            <ul>
-              <li><strong>RGB Stream:</strong> Processes the color image to extract visual features.</li>
-              <li><strong>Depth Stream:</strong> Processes the depth map to extract geometric features.</li>
-            </ul>
-            <p>
-              Features from the convolutional layers of both streams are concatenated only before the final fully connected layer. This allows the network to learn modality-specific representations before fusing them for the final classification.
-            </p>
-          </div>
+          <p>
+            For this task, a late RGB-D fusion architecture was proposed utilizing two separate ResNet-18 CNNs, one for RGB images and one for depth data. The features from the convolutional layers of both CNNs are concatenated before reaching the fully connected layer. This architecture allows the model to leverage both visual and geometric features effectively.
+          </p>
 
           <figure class="image is-centered" style="margin-bottom: 30px;">
             <img src="./static/images/vision_sensor_architecture.png" 
                  alt="Late Fusion CNN Architecture" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Architecture of the RGB-D Late Fusion model using separate ResNet-18 backbones.</figcaption>
+            <figcaption class="has-text-centered is-size-7">Architecture of the proposed RGB-D late fusion model using separate RGB and depth ResNet-18 CNNs, followed by feature concatenation and a fully connected layer.</figcaption>
           </figure>
 
-          <div class="content has-text-justified">
-            <h5 class="title is-5">3. Fusion Strategy & Interpolation</h5>
-            <p>
-              We evaluated three fusion strategies: Early, Late, and Parallel. The <strong>Late Fusion</strong> approach demonstrated the highest accuracy for this task. After the network predicts the probability vector for the discretized classes, we recover the precise continuous value using linear interpolation (weighted mean). For angular estimation, we calculate the means of \(sin(\theta)\) and \(cos(\theta)\) separately to correctly handle the circular domain.
-            </p>
-          </div>
+          <p>
+            The performance of the proposed model was compared to early and parallel fusion architectures, and it was found that the late fusion architecture yields the best performance. The predicted probability vector is employed to estimate the continuous relative angle and radius through linear interpolation. This process involves thresholding negligible values to suppress noise, normalizing the probability vector, and calculating the weighted mean value across all classes. Since the angular domain is circular, the mean values are calculated separately for \(sin(\theta)\) and \(cos(\theta)\) to correctly derive the estimated angle.
+          </p>
 
           <figure class="image is-centered" style="margin-bottom: 20px;">
             <img src="./static/images/fusion_comparison.png" 
                  alt="Comparison of Fusion Architectures" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Illustration of Early, Late, and Parallel fusion strategies evaluated in this research.</figcaption>
+            <figcaption class="has-text-centered is-size-7">Illustration of different RGB-D fusion methods: (a) Early fusion, where RGB and depth data are fused at the input level, (b) Late fusion, where features from separate CNNs are concatenated at a later stage, (c) Parallel fusion, where separate CNNs process the data in parallel and the output is fused.</figcaption>
           </figure>
 
         </div>
