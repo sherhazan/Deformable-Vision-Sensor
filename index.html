@@ -38,6 +38,21 @@
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+
 </head>
 <body>
 
@@ -156,21 +171,21 @@
               <strong>5. Location Improvement:</strong> A position-based impedance controller adjusts the robot's location. It optimizes the trade-off between minimizing the position error (peg vs. hole) and minimizing the virtual forces and torques.
             </li>
             <li>
-              <strong>6. Insertion:</strong> Once the alignment is confirmed by the decision-making module, the robotic arm performs the final insertion[cite: 456].
+              <strong>6. Insertion:</strong> Once the alignment is confirmed by the decision-making module, the robotic arm performs the final insertion.
             </li>
           </ul>
         </div>
-        <img src="./static/images/pipeline_diagram.png" alt="PIH Insertion Pipeline Block Diagram" style="width: 100%; margin-bottom: 20px;"/>
+        <img src="./static/images/pipeline_diagram.png" alt="PIH Insertion Pipeline Block Diagram" style="width: 80%; margin-bottom: 20px;"/>
       </div>
     </div>
 
       <div class="columns is-centered">
       <div class="column is-full-width">
-        <h3 class="title is-4">IndustRobot: Pose-Based Robotic Manipulation</h3>
+        <h3 class="title is-4">3D Vision Sensor</h3>
         
         <div class="content has-text-justified">
           <p>
-            To address flexible and scalable automation, we present IndustRobot, a modular framework that integrates IndustRoPose's perception with a skill-based manipulation layer. To execute complex assembly tasks, we decompose the process into a sequence of modular and reusable skills that can be refined independently and recombined to solve new tasks. These skills, illustrated in the figure below, include:
+           The proposed 3D vision sensor utilizes RGB-D data to estimate the relative angle ($\theta$) and radius ($R$) between the peg and the hole. The system is built upon a classification CNN followed by a mathematical interpolation stage to recover continuous values.
           </p>
           <ul>
             <li><strong>Move to Object:</strong> A pose-based skill using the IndustRoPose tracker to guide the gripper to the target object.</li>
