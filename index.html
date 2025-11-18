@@ -187,26 +187,70 @@
         
         <div class="content has-text-justified">
           <p>
-           The proposed 3D vision sensor utilizes RGB-D data to estimate the relative angle ($\theta$) and radius ($R$) between the peg and the hole. The system is built upon a classification CNN followed by a mathematical interpolation stage to recover continuous values.
+            The proposed 3D vision sensor is designed to estimate the relative angle (\(\hat{\theta}\)) and radius (\(\hat{R}\)) between the peg and the hole using RGB-D data. The system operates in a closed loop, capturing the 3D scene, classifying the relative position, and extracting a continuous value to guide the robot.
           </p>
-          <ul>
-            <li><strong>Move to Object:</strong> A pose-based skill using the IndustRoPose tracker to guide the gripper to the target object.</li>
-            <li><strong>Move Gripper:</strong> A low-level skill for force-controlled grasping.</li>
-            <li><strong>Move Object to:</strong> A pose-based skill to transport the grasped object to a target, also stabilized by the tracker.</li>
-            <li><strong>Insertion / Screwing:</strong> Advanced skills for the final, high-precision, contact-rich maneuvers.</li>
-          </ul>
+          </div>
+
+          <figure class="image is-centered" style="margin-bottom: 30px;">
+            <img src="./static/images/vision_sensor_block_diagram.png" 
+                 alt="3D Vision Sensor Block Diagram" 
+                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption class="has-text-centered is-size-7">Block diagram of the proposed 3D vision sensor pipeline.</figcaption>
+          </figure>
+
+          <div class="content has-text-justified">
+            <h5 class="title is-5">1. Space Discretization</h5>
+            <p>
+              To apply robust classification methods to this continuous regression problem, we discretize the scene space. The area around the hole is divided into equal sub-areas (classes). For the angular domain, the space is divided into sectors, while for the radial domain, it is divided into concentric rings.
+            </p>
+          </div>
+
+          <figure class="image is-centered" style="margin-bottom: 30px;">
+            <img src="./static/images/discretization.png" 
+                 alt="Space Discretization" 
+                 style="width: 60%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption class="has-text-centered is-size-7">Discretization of the scene space into sub-areas for Angle (left) and Radius (right).</figcaption>
+          </figure>
+
+          <div class="content has-text-justified">
+            <h5 class="title is-5">2. Late Fusion Architecture</h5>
+            <p>
+              We employ a <strong>Late Fusion</strong> Convolutional Neural Network (CNN) based on the ResNet-18 backbone. The architecture consists of two separate streams:
+            </p>
+            <ul>
+              <li><strong>RGB Stream:</strong> Processes the color image to extract visual features.</li>
+              <li><strong>Depth Stream:</strong> Processes the depth map to extract geometric features.</li>
+            </ul>
+            <p>
+              Features from the convolutional layers of both streams are concatenated only before the final fully connected layer. This allows the network to learn modality-specific representations before fusing them for the final classification.
+            </p>
+          </div>
+
+          <figure class="image is-centered" style="margin-bottom: 30px;">
+            <img src="./static/images/vision_sensor_architecture.png" 
+                 alt="Late Fusion CNN Architecture" 
+                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption class="has-text-centered is-size-7">Architecture of the RGB-D Late Fusion model using separate ResNet-18 backbones.</figcaption>
+          </figure>
+
+          <div class="content has-text-justified">
+            <h5 class="title is-5">3. Fusion Strategy & Interpolation</h5>
+            <p>
+              We evaluated three fusion strategies: Early, Late, and Parallel. The <strong>Late Fusion</strong> approach demonstrated the highest accuracy for this task. After the network predicts the probability vector for the discretized classes, we recover the precise continuous value using linear interpolation (weighted mean). For angular estimation, we calculate the means of \(sin(\theta)\) and \(cos(\theta)\) separately to correctly handle the circular domain.
+            </p>
+          </div>
+
+          <figure class="image is-centered" style="margin-bottom: 20px;">
+            <img src="./static/images/fusion_comparison.png" 
+                 alt="Comparison of Fusion Architectures" 
+                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption class="has-text-centered is-size-7">Illustration of Early, Late, and Parallel fusion strategies evaluated in this research.</figcaption>
+          </figure>
+
         </div>
-        <img src="./static/images/PoseBasedRoboticManipulation.png" alt="Modular manipulation skills pipeline" style="width: 100%;"/>
-        
-        <br><br> <div class="content has-text-justified">
-          <p>
-            For precise, contact-rich skills like insertion, we use an advanced policy implemented using a transformer-based architecture. As shown in the next figure, it processes images from two cameras through ResNet18 encoders to extract feature maps. These are fed into a Transformer Encoder to find robust cross-view correspondences. Finally, an MLP decoder regresses the precise 6-DOF pose correction required for alignment.
-          </p>
-        </div>
-        <img src="./static/images/transformer.png" alt="Transformer insertion policy architecture" style="width: 100%;"/>
-        
       </div>
-    </div>
+
+
 
       <div class="columns is-centered">
       <div class="column is-full-width">
