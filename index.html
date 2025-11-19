@@ -246,277 +246,111 @@
         
         <div class="content has-text-justified">
           <p>
-            We evaluated our framework on two real-world tasks: plug insertion and screw driving, using a diverse set of standard industrial and consumer components.
+            The evaluation of the relative position estimation involves analyzing the performance of various CNN architectures and assessing the accuracy of the relative radius and angle estimations. The proposed 3D vision sensor demonstrates promising results, as both angle and radius errors are below the predefined industrial error tolerance (1 mm in radius and 10 degrees in angle). Moreover, it was found that the late fusion architecture yields the best performance compared to other fusion strategies.
           </p>
         </div>
-        
-        <h3 class="title is-4">Test Cases & Experimental Setup</h3>
-        
-        <div class="content has-text-justified">
+
+        <figure class="image is-centered" style="margin-bottom: 30px;">
+            <div class="columns is-centered">
+              <div class="column is-half">
+                 <img src="./static/images/angle_regression.png" alt="Angle Regression Plot" style="width: 80%;"/>
+                 <figcaption class="has-text-centered is-size-7">Comparison of ground truth and estimated values for the Medical Pipe task: (a) Relative angle estimation, (b) Relative radius estimation. The red line represents the ground truth, indicating where the points should ideally lie. The gray lines indicate the first and second margins, encompassing where 95% and 68% of the points are located, respectively.</figcaption>
+              </div>
+            </div>
+          </figure>
+
           <p>
-            To evaluate generality, we selected a diverse set of standard components. For plug assembly, this included USB (Types A, B, C), Ethernet (RJ45), Telephone (RJ11), and HDMI. The screwing task utilized M8 screws with Phillips (PH2, PH3) and Hex (HEX5, HEX6) drive types.
+            We further analyzed the estimation error in the Cartesian coordinate system to understand spatial dependencies. The estimated relative radius error does not correspond to the peg location, suggesting robustness across the workspace. While the estimated relative angle error is higher for small radii, this is expected; however, in such cases, the peg is already initiated inside the hole. The overall spatial distribution confirms that the sensor maintains high accuracy across the insertion plane.
           </p>
-        </div>
-        <img src="./static/images/text_cases.png" alt="Connectors and screws used in experiments" style="width: 100%;"/>
 
-        <br><br> <div class="content has-text-justified">
+          <figure class="image is-centered" style="margin-bottom: 30px;">
+            <div class="columns is-centered">
+              <div class="column is-half">
+                 <img src="./static/images/spatial_error_angle.png" alt="Spatial Angle Error" style="width: 80%;"/>
+                 <figcaption class="has-text-centered is-size-7">Estimation errors based on the peg location in the insertion plane: (a) Relative angle error, (b) Relative radius error. The blue and red points indicate estimation error below and above the predefined industrial error respectively (1 [mm] in radius and 10° in angle). </figcaption>
+              </div>
+            </div>
+          </figure>
+
           <p>
-            All experiments were conducted on a UR5e robotic arm in a controlled cell. The perception system consists of two Intel RealSense D405 cameras mounted on the robot's wrist. As shown in the figure, the end-effector was task-specific: a Robotiq 2F-85 adaptive gripper for plug insertion and a Bosch GO-2 electric screwdriver for screwing.
+            Since the estimated relative radius serves as an indicative value for the insertion trigger, it was converted into a binary In/Out classification. If the radius exceeds the threshold, the system classifies it as 'Out', prompting location improvement. To minimize false positives, the insertion is initiated only after receiving two consecutive 'In' predictions, reducing the chance of inserting the peg outside the hole to below 1%.
           </p>
-        </div>
-        <img src="./static/images/setup.png" alt="Experimental setup with UR5e robot" style="width: 50%; display: block; margin: auto;"/>
-        <br>
-        
-        <h3 class="title is-4">Success Rates</h3>
-        
-        <div class="content has-text-justified">
+
+          <figure class="image is-centered" style="margin-bottom: 30px;">
+            <img src="./static/images/in_out_classification.png" 
+                 alt="In/Out Classification Accuracy" 
+                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption class="has-text-centered is-size-7">Analysis of errors in the estimated: (a) Angle estimation error versus actual radius, (b) In/Out binary classification accuracy for the insertion task. In both graphs: The blue and red colors indicate In and Out ground truth samples respectively. The Dark and Bright colors indicate correct and incorrect predictions respectively. (For example, dark red color indicates In ground truth sample that correctly predicted as In)</figcaption>
+          </figure>
+
+          <h3 class="title is-4">Robotic Insertion Success Rates</h3>
           <p>
-            We achieved high success rates across all stages. For the plug assembly task, the full end-to-end pipeline success rate was <b>96.67%</b> (58/60). For the screwing task, the full pipeline success rate was <b>97.50%</b> (39/40), validating the robustness and modularity of our approach.
+            The crucial test of the 3D vision sensor lies in validating it across the full insertion pipeline. Experiments were conducted on a UR5e robotic cell with both rigid and deformable objects. For the classic PIH task (4.5 mm peg), the vision sensor enhanced the success rate from 83% to 100%. Similarly, for the challenging Medical Pipe task, the success rate increased from 80% to 98%, validating the system's effectiveness in handling deformable objects.
           </p>
         </div>
 
-        <div class="columns is-desktop">
+        <div class="content has-text-centered">
+          <table class="table is-striped is-bordered is-hoverable" style="margin-left: auto; margin-right: auto; width: 80%;">
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Sensors</th>
+                <th>Radial Error Range ($R_{err}$)</th>
+                <th>Success Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="2" style="vertical-align: middle;">4.5mm Peg / 6mm Hole</td>
+                <td>Force Only</td>
+                <td>[1, 2.5] mm</td>
+                <td>83%</td>
+              </tr>
+              <tr style="background-color: #e8f5e9;">
+                <td><strong>Force + Vision</strong></td>
+                <td>[1, 3.0] mm</td>
+                <td><strong>100%</strong></td>
+              </tr>
+              
+              <tr>
+                <td rowspan="2" style="vertical-align: middle;">8mm Peg / 10mm Hole</td>
+                <td>Force Only</td>
+                <td>[1.5, 3.5] mm</td>
+                <td>80%</td>
+              </tr>
+              <tr style="background-color: #e8f5e9;">
+                <td><strong>Force + Vision</strong></td>
+                <td>[1.5, 10.0] mm</td>
+                <td><strong>100%</strong></td>
+              </tr>
 
-          <div class="column">
+              <tr>
+                <td rowspan="2" style="vertical-align: middle;">16mm Peg / 20mm Hole</td>
+                <td>Force Only</td>
+                <td>[2.5, 8.0] mm</td>
+                <td>51%</td>
+              </tr>
+              <tr style="background-color: #e8f5e9;">
+                <td><strong>Force + Vision</strong></td>
+                <td>[4.0, 14.0] mm</td>
+                <td><strong>90%</strong></td>
+              </tr>
 
-            <p class="has-text-weight-bold has-text-centered" style="margin-bottom: 0.5em;">Plug Assembly Task</p>
-
-            <table class="table is-striped is-fullwidth is-narrow" style="font-size: 0.85em;">
-              <thead>
-                <tr class="has-text-centered">
-                  <th class="has-text-left" style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Connector</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Grasp</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Align</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Insert</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Full pipeline</th>
-                </tr>
-              </thead>
-              <tbody class="has-text-centered">
-                <tr>
-                  <td class="has-text-left">USB Type A</td>
-                  <td>100/100</td>
-                  <td>100/100</td>
-                  <td>97/100</td>
-                  <td>10/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">USB Type B</td>
-                  <td>99/100</td>
-                  <td>100/100</td>
-                  <td>99/100</td>
-                  <td>10/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">USB Type C</td>
-                  <td>99/100</td>
-                  <td>100/100</td>
-                  <td>99/100</td>
-                  <td>10/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">Ethernet RJ45</td>
-                  <td>100/100</td>
-                  <td>100/100</td>
-                  <td>100/100</td>
-                  <td>10/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">Telephone RJ11</td>
-                  <td>86/100</td>
-                  <td>97/100</td>
-                  <td>100/100</td>
-                  <td>9/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">HDMI</td>
-                  <td>100/100</td>
-                  <td>100/100</td>
-                  <td>92/100</td>
-                  <td>9/10</td>
-                </tr>
-                <tr style="border-top: 2px solid #000000;">
-                  <td class="has-text-left">Total</td>
-                  <td>584/600</td>
-                  <td>597/600</td>
-                  <td>587/600</td>
-                  <td>58/60</td>
-                </tr>
-                <tr style="border-bottom: 2px solid #000000;">
-                  <td class="has-text-left"><strong>Success Rate</strong></td>
-                  <td><strong>97.33%</strong></td>
-                  <td><strong>99.50%</strong></td>
-                  <td><strong>97.83%</strong></td>
-                  <td><strong>96.67%</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="column">
-
-            <p class="has-text-weight-bold has-text-centered" style="margin-bottom: 0.5em;">Screw/Unscrew Task</p>
-
-            <table class="table is-striped is-fullwidth is-narrow" style="font-size: 0.85em;">
-              <thead>
-                <tr class="has-text-centered">
-                  <th class="has-text-left" style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Screw type</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Align</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Insert</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Screw</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Unscrew</th>
-                  <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Full pipeline</th>
-                </tr>
-              </thead>
-              <tbody class="has-text-centered">
-                <tr>
-                  <td class="has-text-left">Philips PH2</td>
-                  <td>99/100</td>
-                  <td>100/100</td>
-                  <td>50/50</td>
-                  <td>50/50</td>
-                  <td>10/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">Philips PH3</td>
-                  <td>100/100</td>
-                  <td>100/100</td>
-                  <td>50/50</td>
-                  <td>49/50</td>
-                  <td>10/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">Allen HEX5</td>
-                  <td>98/100</td>
-                  <td>94/100</td>
-                  <td>49/50</td>
-                  <td>46/50</td>
-                  <td>9/10</td>
-                </tr>
-                <tr>
-                  <td class="has-text-left">Allen HEX6</td>
-                  <td>95/100</td>
-                  <td>98/100</td>
-                  <td>48/50</td>
-                  <td>50/50</td>
-                  <td>10/10</td>
-                </tr>
-                <tr style="border-top: 2px solid #000000;">
-                  <td class="has-text-left">Total</td>
-                  <td>392/400</td>
-                  <td>392/400</td>
-                  <td>197/200</td>
-                  <td>195/200</td>
-                  <td>39/40</td>
-                </tr>
-                <tr style="border-bottom: 2px solid #000000;">
-                  <td class="has-text-left"><strong>Success Rate</strong></td>
-                  <td><strong>98.00%</strong></td>
-                  <td><strong>98.00%</strong></td>
-                  <td><strong>98.50%</strong></td>
-                  <td><strong>97.50%</strong></td>
-                  <td><strong>97.50%</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              <tr>
+                <td rowspan="2" style="vertical-align: middle;"><strong>Medical Pipe (Deformable)</strong></td>
+                <td>Force Only</td>
+                <td>[1.5, 2.5] mm</td>
+                <td>80%</td>
+              </tr>
+              <tr style="background-color: #e8f5e9;">
+                <td><strong>Force + Vision</strong></td>
+                <td>[1.5, 2.5] mm</td>
+                <td><strong>98%</strong></td> </tr>
+            </tbody>
+          </table>
+          <p class="is-size-7">Table 1: Success rate comparison between baseline (Force) and our method (Force + Vision).</p>
         </div>
-
-        <p class="content has-text-weight-bold">Grasping (Move to Object)</p>
-        <div class="columns is-multiline">
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/grasping_type_a.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">USB Type A</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/grasping_type_b.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">USB Type B</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/grasping_type_c.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">USB Type C</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/grasping_cat_5.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">Ethernet RJ45</p>
-          </div>
         </div>
-
-        <p class="content has-text-weight-bold" style="margin-top: 1.5rem;">Insertion (Contact-Rich)</p>
-        <div class="columns is-multiline">
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/insertion_type_a.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">USB Type A</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/insertion_type_b.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">USB Type B</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/insertion_type_c.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">USB Type C</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/insertion_cat_5.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">Ethernet RJ45</p>
-          </div>
-        </div>
-        
-        <p class="content has-text-weight-bold" style="margin-top: 1.5rem;">Screwing / Unscrewing</p>
-        <div class="columns is-multiline">
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/screwing_PH_2.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">Philips PH2</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/screwing_PH_3.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">Philips PH3</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/screwing_HEX_5.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">Allen HEX5</p>
-          </div>
-          
-          <div class="column is-one-quarter">
-            <video autoplay loop muted playsinline controls style="width: 100%;">
-              <source src="./static/videos/screwing_HEX_6.mp4" type="video/mp4">
-            </video>
-            <p class="has-text-centered" style="margin-top: 0.25em;">Allen HEX6</p>
-          </div>
-        </div>
-
       </div>
     </div>
 
