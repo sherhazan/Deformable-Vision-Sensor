@@ -260,7 +260,7 @@
             </figcaption>
           </figure>
 
-        <h3 class="title is-4">Architecture Evaluation</h3>
+        <h3 class="title is-4">Architecture</h3>
         <div class="content has-text-justified">
           <p>
             To determine the optimal architecture for our 3D vision sensor, we evaluated three different RGB-D fusion strategies: Early Fusion, Late Fusion, and Parallel Fusion. We compared their performance against single-modality baselines (RGB-only and Depth-only) across the tasks.
@@ -270,7 +270,7 @@
             <img src="./static/images/fusion_comparison.png" 
                  alt="Comparison of Fusion Architectures" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            [cite_start]<figcaption class="has-text-centered is-size-7">Illustration of different RGB-D fusion methods: (a) Early fusion, (b) Late fusion, and (c) Parallel fusion[cite: 531].</figcaption>
+            <figcaption class="has-text-centered is-size-7">Illustration of different RGB-D fusion methods: (a) Early fusion, (b) Late fusion, and (c) Parallel fusion.</figcaption>
           </figure>
         </div>
 
@@ -312,7 +312,7 @@
                   <td>4.75</td>
                 </tr>
                 <tr style="border-bottom: 2px solid #000000;">
-                  <td class="has-text-left">Parallel Fusion</td>
+                  <td class="has-text-left"><strong>Parallel Fusion</strong></td>
                   <td>11.78</td>
                   <td>6.96</td>
                 </tr>
@@ -356,7 +356,7 @@
                   <td>0.35</td>
                 </tr>
                 <tr style="border-bottom: 2px solid #000000;">
-                  <td class="has-text-left">Parallel Fusion</td>
+                  <td class="has-text-left"><strong>Parallel Fusion</strong></td>
                   <td>0.45</td>
                   <td>0.57</td>
                 </tr>
@@ -366,8 +366,11 @@
           </div>
         </div>
 
+        <h3 class="title is-4">3D Sensor Evaluation</h3>
+        <div class="content has-text-justified">
+
           <p>
-            The evaluation of the relative position estimation involves analyzing the performance of various CNN architectures and assessing the accuracy of the relative radius and angle estimations. The proposed 3D vision sensor demonstrates promising results, as both angle and radius errors are below the predefined industrial error tolerance (1 mm in radius and 10 degrees in angle). Moreover, it was found that the late fusion architecture yields the best performance compared to other fusion strategies.
+            We evaluated the 3D vision sensor's performance by comparing the estimated relative positions (angle and radius) against the ground truth. The results indicate that the sensor achieves high accuracy.
           </p>
 
         <figure class="image is-centered" style="margin-bottom: 30px;">
@@ -405,7 +408,6 @@
                   </figcaption>
           </figure>
 
-          <h3 class="title is-4">Robotic Insertion Success Rates</h3>
           <p>
             The crucial test of the 3D vision sensor lies in validating it across the full insertion pipeline. Experiments were conducted on a UR5e robotic cell with both rigid and deformable objects. For the classic PIH task (4.5 mm peg), the vision sensor enhanced the success rate from 83% to 100%. Similarly, for the challenging Medical Pipe task, the success rate increased from 80% to 98%, validating the system's effectiveness in handling deformable objects.
           </p>
@@ -479,22 +481,22 @@
             </div>
           </div>
 
-        <p class="content has-text-weight-bold">Your Section Title</p>
+        <p class="content has-text-weight-bold">Insertion Videos</p>
 
           <div class="columns is-multiline">
 
             <div class="column is-one-half">
               <video autoplay loop muted playsinline controls style="width: 100%;">
-                <source src="./static/videos/video_1.mp4" type="video/mp4">
+                <source src="./static/videos/Rigid_PIH_insertion.mp4" type="video/mp4">
               </video>
-              <p class="has-text-centered" style="margin-top: 0.25em;">Video 1 Title</p>
+              <p class="has-text-centered" style="margin-top: 0.25em;">Rigid PIH insertion</p>
             </div>
 
             <div class="column is-one-half">
               <video autoplay loop muted playsinline controls style="width: 100%;">
-                <source src="./static/videos/video_2.mp4" type="video/mp4">
+                <source src="./static/videos/Medical_pipe_insertion.mp4" type="video/mp4">
               </video>
-              <p class="has-text-centered" style="margin-top: 0.25em;">Video 2 Title</p>
+              <p class="has-text-centered" style="margin-top: 0.25em;">Medical Pipe insertion</p>
             </div>
           </div>
         </div>
