@@ -179,7 +179,9 @@
             <img src="./static/images/pipeline_diagram.png" 
                   alt="3D Vision Sensor Block Diagram" 
                   style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Block diagram of the entire PIH insertion pipeline embedded with the 3D vision sensor.</figcaption>
+            <figcaption
+              class="has-text-centered is-size-7">Block diagram of the entire PIH insertion pipeline embedded with the 3D vision sensor.
+            </figcaption>
           </figure>
       </div>
     </div>
@@ -198,7 +200,9 @@
             <img src="./static/images/vision_sensor_block_diagram.png" 
                  alt="3D Vision Sensor Block Diagram" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Block diagram of the proposed 3D vision sensor for estimating relative positions in Peg-in-Hole tasks.</figcaption>
+            <figcaption 
+              class="has-text-centered is-size-7">Block diagram of the proposed 3D vision sensor for estimating relative positions in Peg-in-Hole tasks.
+            </figcaption>
           </figure>
 
           <p>
@@ -209,7 +213,9 @@
             <img src="./static/images/discretization.png" 
                  alt="Space Discretization" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Discretization of the scene space into sub-areas: (a) according to angle, (b) according to radius.</figcaption>
+            <figcaption 
+              class="has-text-centered is-size-7">Discretization of the scene space into sub-areas: (a) according to angle, (b) according to radius.
+            </figcaption>
           </figure>
 
           <p>
@@ -220,7 +226,9 @@
             <img src="./static/images/vision_sensor_architecture.png" 
                  alt="Late Fusion CNN Architecture" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Architecture of the proposed RGB-D late fusion model using separate RGB and depth ResNet-18 CNNs, followed by feature concatenation and a fully connected layer.</figcaption>
+            <figcaption 
+              class="has-text-centered is-size-7">Architecture of the proposed RGB-D late fusion model using separate RGB and depth ResNet-18 CNNs, followed by feature concatenation and a fully connected layer.
+            </figcaption>
           </figure>
 
           <p>
@@ -231,7 +239,9 @@
             <img src="./static/images/fusion_comparison.png" 
                  alt="Comparison of Fusion Architectures" 
                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Illustration of different RGB-D fusion methods: (a) Early fusion, where RGB and depth data are fused at the input level, (b) Late fusion, where features from separate CNNs are concatenated at a later stage, (c) Parallel fusion, where separate CNNs process the data in parallel and the output is fused.</figcaption>
+            <figcaption
+              class="has-text-centered is-size-7">Illustration of different RGB-D fusion methods: (a) Early fusion, where RGB and depth data are fused at the input level, (b) Late fusion, where features from separate CNNs are concatenated at a later stage, (c) Parallel fusion, where separate CNNs process the data in parallel and the output is fused.
+            </figcaption>
           </figure>
 
         </div>
@@ -249,36 +259,38 @@
         </div>
 
         <figure class="image is-centered" style="margin-bottom: 30px;">
-            <div class="columns is-centered">
-              <div class="column is-half">
-                 <img src="./static/images/angle_regression.png" alt="Angle Regression Plot" style="width: 80%;"/>
-                 <figcaption class="has-text-centered is-size-7">Comparison of ground truth and estimated values for the Medical Pipe task: (a) Relative angle estimation, (b) Relative radius estimation. The red line represents the ground truth, indicating where the points should ideally lie. The gray lines indicate the first and second margins, encompassing where 95% and 68% of the points are located, respectively.</figcaption>
-              </div>
-            </div>
+            <img src="./static/images/angle_regression.png" 
+                  alt="Angle Regression Plot"
+                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+                 <figcaption
+                  class="has-text-centered is-size-7">Comparison of ground truth and estimated values for the Medical Pipe task: (a) Relative angle estimation, (b) Relative radius estimation. The red line represents the ground truth, indicating where the points should ideally lie. The gray lines indicate the first and second margins, encompassing where 95% and 68% of the points are located, respectively.
+                </figcaption>
           </figure>
 
           <p>
             We further analyzed the estimation error in the Cartesian coordinate system to understand spatial dependencies. The estimated relative radius error does not correspond to the peg location, suggesting robustness across the workspace. While the estimated relative angle error is higher for small radii, this is expected; however, in such cases, the peg is already initiated inside the hole. The overall spatial distribution confirms that the sensor maintains high accuracy across the insertion plane.
           </p>
 
-          <figure class="image is-centered" style="margin-bottom: 30px;">
-            <div class="columns is-centered">
-              <div class="column is-half">
-                 <img src="./static/images/spatial_error_angle.png" alt="Spatial Angle Error" style="width: 80%;"/>
-                 <figcaption class="has-text-centered is-size-7">Estimation errors based on the peg location in the insertion plane: (a) Relative angle error, (b) Relative radius error. The blue and red points indicate estimation error below and above the predefined industrial error respectively (1 [mm] in radius and 10° in angle). </figcaption>
-              </div>
-            </div>
+        <figure class="image is-centered" style="margin-bottom: 30px;">
+            <img src="./static/images/spatial_error_angle.png" 
+                  alt="Angle Regression Plot"
+                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+                 <figcaption
+                  class="has-text-centered is-size-7">Estimation errors based on the peg location in the insertion plane: (a) Relative angle error, (b) Relative radius error. The blue and red points indicate estimation error below and above the predefined industrial error respectively (1 [mm] in radius and 10° in angle).
+                </figcaption>
           </figure>
 
           <p>
             Since the estimated relative radius serves as an indicative value for the insertion trigger, it was converted into a binary In/Out classification. If the radius exceeds the threshold, the system classifies it as 'Out', prompting location improvement. To minimize false positives, the insertion is initiated only after receiving two consecutive 'In' predictions, reducing the chance of inserting the peg outside the hole to below 1%.
           </p>
 
-          <figure class="image is-centered" style="margin-bottom: 30px;">
+        <figure class="image is-centered" style="margin-bottom: 30px;">
             <img src="./static/images/in_out_classification.png" 
-                 alt="In/Out Classification Accuracy" 
-                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption class="has-text-centered is-size-7">Analysis of errors in the estimated: (a) Angle estimation error versus actual radius, (b) In/Out binary classification accuracy for the insertion task. In both graphs: The blue and red colors indicate In and Out ground truth samples respectively. The Dark and Bright colors indicate correct and incorrect predictions respectively. (For example, dark red color indicates In ground truth sample that correctly predicted as In)</figcaption>
+                  alt="Angle Regression Plot"
+                  style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption
+              class="has-text-centered is-size-7">Analysis of errors in the estimated: (a) Angle estimation error versus actual radius, (b) In/Out binary classification accuracy for the insertion task. In both graphs: The blue and red colors indicate In and Out ground truth samples respectively. The Dark and Bright colors indicate correct and incorrect predictions respectively. (For example, dark red color indicates In ground truth sample that correctly predicted as In)
+            </figcaption>
           </figure>
 
           <h3 class="title is-4">Robotic Insertion Success Rates</h3>
@@ -288,7 +300,7 @@
         </div>
 
         </div> </div> <div class="columns is-centered">
-          <div class=<h3 class="title is-4 has-text-centered">Robotic Insertion Success Rates</h3>
+          <h3 class="title is-4 has-text-centered">Robotic Insertion Success Rates</h3>
             <div class="content">
               <table class="table is-striped is-fullwidth" style="font-size: 0.9em;">
                 <thead>
