@@ -156,22 +156,22 @@
           </p>
           <ul>
             <li>
-              <strong>1. 3D Vision Sensor:</strong> The system captures the current 3D scene and estimates the relative position between the peg and the hole in terms of relative radius ($\hat{R}$) and relative angle ($\hat{\theta}$).
+              <strong>3D Vision Sensor:</strong> The system captures the current 3D scene and estimates the relative position between the peg and the hole in terms of relative radius ($\hat{R}$) and relative angle ($\hat{\theta}$).
             </li>
             <li>
-              <strong>2. Virtual F/T Sensor:</strong> Raw force ($F_S$) and torque ($T_S$) measurements from the OnRobot sensor are transformed to a virtual point ($P_V$) located at the center of the peg's tip, with its Z-axis aligned to the insertion direction.
+              <strong>Virtual F/T Sensor:</strong> Raw force ($F_S$) and torque ($T_S$) measurements from the OnRobot sensor are transformed to a virtual point ($P_V$) located at the center of the peg's tip, with its Z-axis aligned to the insertion direction.
             </li>
             <li>
-              <strong>3. Virtual Friction Force Sensor:</strong> The friction components of the force vector are replaced with a vision-based virtual friction force ($\hat{F}$). This force represents the direction of the estimated relative angle ($\hat{\theta}$), helping to guide the robot.
+              <strong>Virtual Friction Force Sensor:</strong> The friction components of the force vector are replaced with a vision-based virtual friction force ($\hat{F}$). This force represents the direction of the estimated relative angle ($\hat{\theta}$), helping to guide the robot.
             </li>
             <li>
-              <strong>4. Decision Making:</strong> The system checks the estimated relative radius ($\hat{R}$). If it exceeds a predefined threshold (determined by the object's rigidity), the system proceeds to location improvement. If the condition is met ($\hat{R} \le Threshold$), the insertion is initiated.
+              <strong>Decision Making:</strong> The system checks the estimated relative radius ($\hat{R}$). If it exceeds a predefined threshold, the system proceeds to location improvement. If the condition is met ($\hat{R} \le Threshold$), the insertion is initiated.
             </li>
             <li>
-              <strong>5. Location Improvement:</strong> A position-based impedance controller adjusts the robot's location. It optimizes the trade-off between minimizing the position error (peg vs. hole) and minimizing the virtual forces and torques.
+              <strong>Location Improvement:</strong> A position-based impedance controller adjusts the robot's location. It optimizes the trade-off between minimizing the position error (peg vs. hole) and minimizing the virtual forces and torques.
             </li>
             <li>
-              <strong>6. Insertion:</strong> Once the alignment is confirmed by the decision-making module, the robotic arm performs the final insertion.
+              <strong>Insertion:</strong> Once the alignment is confirmed by the decision-making module, the robotic arm performs the final insertion.
             </li>
           </ul>
         </div>
@@ -231,28 +231,144 @@
             </figcaption>
           </figure>
 
-          <p>
-            The performance of the proposed model was compared to early and parallel fusion architectures, and it was found that the late fusion architecture yields the best performance. The predicted probability vector is employed to estimate the continuous relative angle and radius through linear interpolation. This process involves thresholding negligible values to suppress noise, normalizing the probability vector, and calculating the weighted mean value across all classes. Since the angular domain is circular, the mean values are calculated separately for \(sin(\theta)\) and \(cos(\theta)\) to correctly derive the estimated angle.
-          </p>
-
-          <figure class="image is-centered" style="margin-bottom: 20px;">
-            <img src="./static/images/fusion_comparison.png" 
-                 alt="Comparison of Fusion Architectures" 
-                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
-            <figcaption
-              class="has-text-centered is-size-7">Illustration of different RGB-D fusion methods: (a) Early fusion, where RGB and depth data are fused at the input level, (b) Late fusion, where features from separate CNNs are concatenated at a later stage, (c) Parallel fusion, where separate CNNs process the data in parallel and the output is fused.
-            </figcaption>
-          </figure>
-
         </div>
       </div>
 
-      <div class="columns is-centered">
-      <div class="column is-full-width">
 
+    <div class="columns is-centered">
+      <div class="column is-full-width">
         <h2 class="title is-3">Experiments</h2>
-        
+
+        <h3 class="title is-4">Test Cases</h3>
         <div class="content has-text-justified">
+
+          <p>
+            To evaluate the versatility and robustness of our 3D vision sensor, we defined three distinct test cases ranging from rigid to highly deformable objects. These scenarios represent common industrial assembly challenges:
+          </p>
+          <ul>
+            <li><strong>(a) Classical Rigid PIH:</strong> Standard insertion of rigid pegs into rigid holes with varying clearances, serving as a baseline for system accuracy.</li>
+            <li><strong>(b) Deformable Electric Wire:</strong> Insertion of a thin (1 mm) deformable electric wire into a rigid connector, testing the system's ability to handle fine, flexible components.</li>
+            <li><strong>(c) Medical Pipe:</strong> The primary motivating task, involving the insertion of a flexible medical pipe into a deformable connector. This represents a complex scenario where both the inserted object and the target can deform.</li>
+          </ul>
+
+          <figure class="image is-centered" style="margin-bottom: 20px;">
+            <img src="./static/images/testcases.png" 
+                 alt="Comparison of Fusion Architectures" 
+                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            <figcaption
+              class="has-text-centered is-size-7">The PIH test cases: (a) a classical PIH with rigid objects; (b) wiring a 1 mm thick deformable electric wire to a rigid connector; (c) inserting a deformable medical pipe into a deformable connector.
+            </figcaption>
+          </figure>
+
+        <h3 class="title is-4">Architecture Evaluation</h3>
+        <div class="content has-text-justified">
+          <p>
+            To determine the optimal architecture for our 3D vision sensor, we evaluated three different RGB-D fusion strategies: Early Fusion, Late Fusion, and Parallel Fusion. We compared their performance against single-modality baselines (RGB-only and Depth-only) across the tasks.
+          </p>
+
+          <figure class="image is-centered" style="margin-bottom: 30px;">
+            <img src="./static/images/fusion_comparison.png" 
+                 alt="Comparison of Fusion Architectures" 
+                 style="width: 80%; display: block; margin-left: auto; margin-right: auto;"/>
+            [cite_start]<figcaption class="has-text-centered is-size-7">Illustration of different RGB-D fusion methods: (a) Early fusion, (b) Late fusion, and (c) Parallel fusion[cite: 531].</figcaption>
+          </figure>
+        </div>
+
+<div class="columns is-desktop">
+
+  <div class="column">
+
+    <p class="has-text-weight-bold has-text-centered" style="margin-bottom: 0.5em;">
+      Angle Estimation Error (MAE [deg])
+    </p>
+
+    <table class="table is-striped is-fullwidth is-narrow" style="font-size: 0.85em;">
+      <thead>
+        <tr class="has-text-centered">
+          <th class="has-text-left" style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Architecture</th>
+          <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Classical PIH</th>
+          <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Medical Pipe</th>
+        </tr>
+      </thead>
+      <tbody class="has-text-centered">
+        <tr>
+          <td class="has-text-left">RGB</td>
+          <td>6.65</td>
+          <td>5.43</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Depth</td>
+          <td>25.38</td>
+          <td>10.86</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Early Fusion</td>
+          <td>8.43</td>
+          <td>5.37</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Late Fusion (Ours)</td>
+          <td>5.30</td>
+          <td>4.75</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Parallel Fusion</td>
+          <td>11.78</td>
+          <td>6.96</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="column">
+
+    <p class="has-text-weight-bold has-text-centered" style="margin-bottom: 0.5em;">
+      Radius Estimation Error (MAE [mm])
+    </p>
+
+    <table class="table is-striped is-fullwidth is-narrow" style="font-size: 0.85em;">
+      <thead>
+        <tr class="has-text-centered">
+          <th class="has-text-left" style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Architecture</th>
+          <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Classical PIH</th>
+          <th style="border-top: 2px solid #000000; border-bottom: 2px solid #000000;">Medical Pipe</th>
+        </tr>
+      </thead>
+      <tbody class="has-text-centered">
+        <tr>
+          <td class="has-text-left">RGB</td>
+          <td>0.59</td>
+          <td>0.56</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Depth</td>
+          <td>1.03</td>
+          <td>0.78</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Early Fusion</td>
+          <td>0.64</td>
+          <td>0.53</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Late Fusion (Ours)</td>
+          <td>0.31</td>
+          <td>0.35</td>
+        </tr>
+        <tr>
+          <td class="has-text-left">Parallel Fusion</td>
+          <td>0.45</td>
+          <td>0.57</td>
+        </tr>
+      </tbody>
+    </table>
+
+            </div>
+          </div>
+
+        </div>
+
           <p>
             The evaluation of the relative position estimation involves analyzing the performance of various CNN architectures and assessing the accuracy of the relative radius and angle estimations. The proposed 3D vision sensor demonstrates promising results, as both angle and radius errors are below the predefined industrial error tolerance (1 mm in radius and 10 degrees in angle). Moreover, it was found that the late fusion architecture yields the best performance compared to other fusion strategies.
           </p>
